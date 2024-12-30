@@ -29,7 +29,7 @@ class Kamal::Commands::Builder::Cloud < Kamal::Commands::Builder::Base
 
   def context_needed?
     # Raise error for invalid local paths
-    raise Kamal::ConfigurationError, "Context is not a valid file or directory: #{context}" if @context_type == :invalid_local_path
+    raise Kamal::ConfigurationError, "Context is not a valid file or directory: #{context_name}" if @context_type == :invalid_local_path
     return false if @context_type == :local_file || @context_type == :local_directory
     true
   end
@@ -57,7 +57,7 @@ class Kamal::Commands::Builder::Cloud < Kamal::Commands::Builder::Base
   end
 
   def set_context_type
-    f = Pathname.new(context)
+    f = Pathname.new(context_name)
 
     @context_type = case
                     when standard_input?
@@ -83,12 +83,12 @@ class Kamal::Commands::Builder::Cloud < Kamal::Commands::Builder::Base
   end
 
   def standard_input?
-    context == '-' || context == '/dev/stdin'
+    context_name == '-' || context_name == '/dev/stdin'
   end
 
   def remote_resource?
     begin
-      uri = URI.parse(context)
+      uri = URI.parse(context_name)
       uri.scheme && ['http', 'https', 'git', 'ftp'].include?(uri.scheme)
     rescue URI::InvalidURIError
       false
@@ -96,7 +96,7 @@ class Kamal::Commands::Builder::Cloud < Kamal::Commands::Builder::Base
   end
 
   def classify_remote_resource
-    uri = URI.parse(context)
+    uri = URI.parse(context_name)
 
     case
     when git_repository?
@@ -111,18 +111,18 @@ class Kamal::Commands::Builder::Cloud < Kamal::Commands::Builder::Base
   end
 
   def git_repository?
-    context.match?(/\.git$/) || 
-    context.include?('github.com') || 
-    context.include?('gitlab.com') || 
-      context.include?('bitbucket.org')
+    context_name.match?(/\.git$/) || 
+    context_name.include?('github.com') || 
+    context_name.include?('gitlab.com') || 
+      context_name.include?('bitbucket.org')
   end
 
   def tarball?
-    context.match?(/\.(tar|tar\.gz|tgz|tar\.bz2|zip)$/)
+    context_name.match?(/\.(tar|tar\.gz|tgz|tar\.bz2|zip)$/)
   end
 
   def http_or_https_file?
-    uri = URI.parse(context)
+    uri = URI.parse(context_name)
     uri.scheme.in?(['http', 'https']) && 
       uri.path.match?(/\.[a-zA-Z0-9]+$/)
   end
