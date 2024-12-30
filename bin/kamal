@@ -3,7 +3,7 @@
 # Prevent failures from being reported twice.
 Thread.report_on_exception = false
 
-require "/Users/stevenfernandez/Development/kamal/lib/kamal.rb"
+require "kamal"
 
 begin
   Kamal::Cli::Main.start(ARGV)
