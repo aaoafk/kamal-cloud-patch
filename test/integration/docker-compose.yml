@@ -1,0 +1,67 @@
+name: "kamal-test"
+
+volumes:
+  shared:
+  registry:
+  deployer_bundle:
+
+services:
+  shared:
+    build:
+      context: docker/shared
+    volumes:
+      - shared:/shared
+
+  deployer:
+    privileged: true
+    build:
+      context: docker/deployer
+    environment:
+      - TEST_ID=${TEST_ID:-}
+    volumes:
+      - ../..:/kamal
+      - shared:/shared
+      - registry:/registry
+      - deployer_bundle:/usr/local/bundle/
+
+  registry:
+    build:
+      context: docker/registry
+    environment:
+      - REGISTRY_HTTP_ADDR=0.0.0.0:4443
+      - REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt
+      - REGISTRY_HTTP_TLS_KEY=/certs/domain.key
+    volumes:
+      - shared:/shared
+      - registry:/var/lib/registry/
+
+  vm1:
+    privileged: true
+    build:
+      context: docker/vm
+    volumes:
+      - shared:/shared
+
+  vm2:
+    privileged: true
+    build:
+      context: docker/vm
+    volumes:
+      - shared:/shared
+
+  vm3:
+    privileged: true
+    build:
+      context: docker/vm
+    volumes:
+      - shared:/shared
+
+  load_balancer:
+    build:
+      context: docker/load_balancer
+    ports:
+      - "12345:80"
+    depends_on:
+      - vm1
+      - vm2
+      - vm3
