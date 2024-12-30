@@ -35,7 +35,7 @@ class Kamal::Commands::Builder::Cloud < Kamal::Commands::Builder::Base
   end
 
   def context_name
-    builder_context
+    builder_config.context
   end
 
   def builder_name
