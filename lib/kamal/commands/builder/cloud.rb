@@ -2,11 +2,6 @@ class Kamal::Commands::Builder::Cloud < Kamal::Commands::Builder::Base
   # Tracks the type of build context
   attr_accessor :context_type
 
-  def initialize(...)
-    set_context_type
-    super(...)
-  end
-
   def create
     chain \
       (create_context if context_needed?),
@@ -54,6 +49,10 @@ class Kamal::Commands::Builder::Cloud < Kamal::Commands::Builder::Base
 
   def bln_cloud_builder_available
     `docker builder ls --format "json" | jq -s 'map(.Driver) | contains(["cloud"])'`.strip!
+  end
+
+  def context_type
+    @context_type ||= set_context_type
   end
 
   def set_context_type
