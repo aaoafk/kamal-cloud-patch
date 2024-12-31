@@ -41,6 +41,7 @@ class Kamal::Commands::Builder::Base < Kamal::Commands::Base
   end
 
   def build_context
+    puts "CONFIG: #{config}"
     config.builder.context
   end
 

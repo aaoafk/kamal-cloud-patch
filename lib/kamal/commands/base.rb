@@ -1,4 +1,3 @@
-# require 'debug'
 module Kamal::Commands
   class Base
     delegate :sensitive, :argumentize, to: Kamal::Utils
@@ -8,7 +7,6 @@ module Kamal::Commands
     attr_accessor :config
 
     def initialize(config)
-      # binding.b pre: "info"
       @config = config
     end
 
